@@ -36,13 +36,5 @@ class PurchaseOrderAdmin(admin.ModelAdmin):
 
 
 from django.contrib import admin
-from .models import Doctor, Availability
+from .models import Doctor
 
-class AvailabilityInline(admin.TabularInline):
-    model = Availability
-    extra = 1
-
-class DoctorAdmin(admin.ModelAdmin):
-    inlines = [AvailabilityInline]
-
-admin.site.register(Doctor, DoctorAdmin)

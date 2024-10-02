@@ -154,3 +154,21 @@ class AppointmentForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'type': 'text', 'class': 'datepicker'}),
             'time': forms.TimeInput(attrs={'type': 'text', 'class': 'timepicker'}),
         }
+
+from django import forms
+from .models import Doctor
+
+class DoctorForm(forms.ModelForm):
+    class Meta:
+        model = Doctor
+        fields = ['name', 'specialization', 'location', 'day_of_week', 'start_time', 'end_time']
+
+# from django import forms
+# from .models import Availability
+
+# class AvailabilityForm(forms.ModelForm):
+#     class Meta:
+#         model = Availability
+#         fields = ['doctor', 'day_of_week', 'start_time', 'end_time']
+
+

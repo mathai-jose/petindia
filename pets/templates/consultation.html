@@ -133,14 +133,13 @@
                     <h3>Dashboard</h3>
                     {% if user.is_authenticated %}
                     <a href="{% url 'add_record' %}">Dashboard</a>
-
-                        <a href="{% url 'add_record' %}">Visualization</a>
-                        <a href="{% url 'consultation' %}">Veterinarian Consultation</a>
-                        <a href="https://pet-disease-prediction-ewrxf6nkskvzzct4eky7eh.streamlit.app/">Streamlit</a>
-                        <a href="{% url 'user_logout' %}">Logout</a>
+                    <a href="{% url 'add_record' %}">Visualization</a>
+                    <a href="{% url 'consultation' %}">Veterinarian Consultation</a>
+                    <a href="https://pet-disease-prediction-ewrxf6nkskvzzct4eky7eh.streamlit.app/">Streamlit</a>
+                    <a href="{% url 'user_logout' %}">Logout</a>
                     {% else %}
-                        <a href="{% url 'combined_login' %}">Visualization</a>
-                        <a href="{% url 'combined_login' %}">Veterinarian Consultation</a>
+                    <a href="{% url 'combined_login' %}">Visualization</a>
+                    <a href="{% url 'combined_login' %}">Veterinarian Consultation</a>
                     {% endif %}
                 </div>
             </div>
@@ -148,25 +147,23 @@
                 <div class="container">
                     <h1>Doctors and Availability</h1>
                     {% for doctor in doctors %}
-                        <div class="doctor-container">
-                            <div class="doctor-info">
-                                <h2>{{ doctor.name }}</h2>
-                                <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
-                                <p><strong>Location:</strong> {{ doctor.location }}</p>
-                            </div>
-                            <div>
-                                <p class="availability-header">Availability:</p>
-                                <ul class="availability">
-                                    {% for availability in doctor.availabilities.all %}
-                                        <li>
-                                            <span><strong>{{ availability.day_of_week }}:</strong></span> 
-                                            <span>{{ availability.start_time }} - {{ availability.end_time }}</span>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <a href="{% url 'appointment' doctor.id %}" class="btn">Make an Appointment</a>
+                    <div class="doctor-container">
+                        <div class="doctor-info">
+                            <h2>{{ doctor.name }}</h2>
+                            <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
+                            <p><strong>Location:</strong> {{ doctor.location }}</p>
                         </div>
+                        <div>
+                            <p class="availability-header">Availability:</p>
+                            <ul class="availability">
+                                <li>
+                                    <strong>{{ doctor.day_of_week }}:</strong> 
+                                    {{ doctor.start_time|time:"H:i" }} - {{ doctor.end_time|time:"H:i" }}
+                                </li>
+                            </ul>
+                        </div>
+                        <a href="{% url 'appointment' doctor.id %}" class="btn">Make an Appointment</a>
+                    </div>
                     {% endfor %}
                 </div>
             </div>

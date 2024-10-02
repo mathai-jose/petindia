@@ -74,5 +74,8 @@ urlpatterns = [
     path('appointment-success/', appointment_success_view, name='appointment_success'),
     path('appointments/', views.all_appointments, name='all_appointments'),
     path('cancel_appointment/<int:appointment_id>/', views.cancel_appointment, name='cancel_appointment'),
+    path('add_doctor/', add_doctor, name='add_doctor'),
+    path('appointments/approve/<int:appointment_id>/', approve_appointment, name='approve_appointment'),
+
 ]
 

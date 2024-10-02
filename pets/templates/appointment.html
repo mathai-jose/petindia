@@ -84,6 +84,11 @@
         <form method="post">
             {% csrf_token %}
             <div class="form-group">
+                <label for="doctor">Doctor</label>
+                {{ form.doctor.errors }}  <!-- Display name field errors -->
+                {{ form.doctor }}  <!-- Render the name field -->
+            </div>
+            <div class="form-group">
                 <label for="name">Your Name</label>
                 {{ form.name.errors }}  <!-- Display name field errors -->
                 {{ form.name }}  <!-- Render the name field -->

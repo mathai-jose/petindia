@@ -187,15 +187,11 @@ class ChatHistory(models.Model):
 
 
 class Doctor(models.Model):
-    name = models.CharField(max_length=100,default='')
+    name = models.CharField(max_length=100, default='')
     specialization = models.CharField(max_length=100)
-    location = models.CharField(max_length=100,default='')
+    location = models.CharField(max_length=100, default='')
 
-    def __str__(self):
-        return self.name
-
-class Availability(models.Model):
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='availabilities')
+    # Add availability fields with default values
     day_of_week = models.CharField(max_length=9, choices=[
         ('Monday', 'Monday'),
         ('Tuesday', 'Tuesday'),
@@ -204,13 +200,13 @@ class Availability(models.Model):
         ('Friday', 'Friday'),
         ('Saturday', 'Saturday'),
         ('Sunday', 'Sunday'),
-    ])
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    ], default='Monday')  # Set a default day if needed
+    
+    start_time = models.TimeField(default='09:00:00')  # Default start time
+    end_time = models.TimeField(default='17:00:00')  # Default end time
 
     def __str__(self):
-        return f"{self.doctor.name} - {self.day_of_week} ({self.start_time} - {self.end_time})"
-    
+        return self.name
 class Appointment(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -218,6 +214,7 @@ class Appointment(models.Model):
     phone = models.CharField(max_length=15)
     date = models.DateField()
     time = models.TimeField()
+    approved = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Appointment with Dr. {self.doctor.name} for {self.name} on {self.date} at {self.time}"

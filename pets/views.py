@@ -1437,6 +1437,7 @@ def chat(request):
 #     return render(request, 'consultation_detail.html', {'consultation': consultation, 'form': form})
 
 # # views.py for chatgbt
+from collections import Counter
 
 
 def consultation_view(request):
@@ -1479,12 +1480,29 @@ def pet_medical_advisor(request):
         pass
 
     return render(request, 'consultation.html')
+from datetime import datetime, timedelta
 
 @login_required
 def all_appointments(request):
-    appointments = Appointment.objects.all()
-    return render(request, 'all_appointments.html', {'appointments': appointments})
+    # Get today's date and calculate the date six months ago
+    six_months_ago = datetime.now() - timedelta(days=30)
+    
+    # Filter appointments from the last 6 months
+    appointments = Appointment.objects.filter(date__gte=six_months_ago)
 
+    # Count appointments for each doctor
+    doctor_appointments = Counter(appointment.doctor.name for appointment in appointments)
+
+    # Prepare data for the chart
+    doctor_names = list(doctor_appointments.keys())
+    appointment_counts = list(doctor_appointments.values())
+
+    return render(request, 'all_appointments.html', {
+        'appointments': appointments,
+        'doctor_appointments': doctor_appointments,
+        'doctor_names': doctor_names,
+        'appointment_counts': appointment_counts
+    })
 @login_required
 def cancel_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
@@ -1505,3 +1523,56 @@ def cancel_appointment(request, appointment_id):
     send_mail(subject, message, from_email, recipient_list)
 
     return redirect('all_appointments')
+    
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .forms import DoctorForm
+from .models import Doctor
+from django.core.mail import send_mail
+from django.conf import settings
+
+@login_required
+def add_doctor(request):
+    if not request.user.is_superuser:
+        return redirect('home')  # Ensure only superusers can access this view
+
+    if request.method == 'POST':
+        form = DoctorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('admin_dashboard')  # Replace with your admin dashboard URL
+    else:
+        form = DoctorForm()
+
+    return render(request, 'add_doctor.html', {'form': form})
+@login_required
+def approve_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    # Check if the appointment is already approved
+    if appointment.approved:
+        messages.warning(request, 'This appointment has already been approved.')
+        return redirect('all_appointments')
+
+    # Update the appointment to set it as approved
+    appointment.approved = True
+    appointment.save()
+
+    # Customize the email details as needed
+    subject = 'Appointment Approved'
+    message = f'Hello {appointment.name},\n\nYour appointment with Dr. {appointment.doctor.name} has been approved.\n\nThank you!'
+    from_email = 'your_email@example.com'  # Change to your sending email
+    recipient_list = [appointment.email]
+
+    # Send the email
+    try:
+        send_mail(subject, message, from_email, recipient_list)
+        messages.success(request, 'Approval email sent successfully.')
+    except Exception as e:
+        messages.error(request, f'Error sending email: {str(e)}')
+
+    # Redirect back to the appointments page
+    return redirect('all_appointments')  # Change to your appointments page URL

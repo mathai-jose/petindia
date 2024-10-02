@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Appointments</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Add Chart.js -->
     <style>
         .container {
             margin-top: 50px;
@@ -19,6 +20,18 @@
         }
         .btn-cancel:hover {
             background-color: #e60000;
+        }
+        .btn-approve {
+            background-color: #28a745; /* Green color */
+            color: white;
+        }
+        .btn-approve:hover {
+            background-color: #218838; /* Darker green on hover */
+        }
+        .btn-success {
+            background-color: #28a745; /* Green background for approved state */
+            color: white; /* Text color */
+            cursor: not-allowed; /* Show that the button is disabled */
         }
     </style>
 </head>
@@ -47,15 +60,60 @@
                         <td>{{ appointment.date }}</td>
                         <td>{{ appointment.time }}</td>
                         <td>
-                            <form method="POST" action="{% url 'cancel_appointment' appointment.id %}">
+                            <form method="POST" action="{% url 'cancel_appointment' appointment.id %}" style="display:inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-cancel btn-sm">Cancel</button>
+                            </form>
+                            <form method="POST" action="{% url 'approve_appointment' appointment.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-approve btn-sm" 
+                                    {% if appointment.approved %} disabled {% endif %}>
+                                    {% if appointment.approved %} Approved {% else %} Approve {% endif %}
+                                </button>
                             </form>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+
+        <!-- Bar chart for doctor appointments -->
+        <h2 class="text-center">Appointments per Doctor over months</h2>
+        <canvas id="appointmentsChart"></canvas>
     </div>
+
+    <script>
+        const ctx = document.getElementById('appointmentsChart').getContext('2d');
+        const appointmentsChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ doctor_names|safe }}, // Doctor names
+                datasets: [{
+                    label: 'Number of Appointments',
+                    data: {{ appointment_counts|safe }}, // Appointment counts
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Appointments'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Doctors'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
