@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weight vs Age Correlation Graph</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <h2>Weight vs Age Correlation Graph</h2>
+    <div id="graphDiv"></div>
+
+    <script>
+        function fetchGraphData() {
+            $.ajax({
+                url: "{% url 'fetch_data' %}",
+                dataType: 'json',
+                success: function(data) {
+                    // Render the graph using Plotly
+                    Plotly.newPlot('graphDiv', data.data, data.layout);
+                }
+            });
+        }
+
+        // Fetch data on page load
+        $(document).ready(function() {
+            fetchGraphData();
+        });
+
+        // Optional: Set an interval to update the data dynamically
+        setInterval(fetchGraphData, 5000);  // Update every 5 seconds
+    </script>
+
+</body>
+</html>

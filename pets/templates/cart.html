@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <!-- CSS styles -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ccc; /* Add border */
+        }
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .quantity-btn, .delete-btn {
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .quantity-btn {
+            background-color: #28a745;
+            color: #fff;
+            margin-right: 5px;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        img {
+            max-width: 80px;
+            height: auto;
+            display: block;
+            margin: auto;
+        }
+        .total-row {
+            font-weight: bold;
+        }
+        .checkout-btn-container {
+            text-align: right; /* Align to the right side */
+        }
+        .checkout-btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .checkout-btn:hover {
+            background-color: #0056b3; /* Darker color on hover */
+        }
+        .empty-cart-message {
+            text-align: center;
+            margin-top: 250px;
+            font-size: 25px;
+            color: #737372;
+        }
+    </style>
+</head>
+<body>
+    <h1>SHOPPING CART</h1>
+    {% if cart_items %}
+    <!-- Display cart items if there are any -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for key, item in cart_items.items %}
+            <tr>
+                <td><img src="{{ item.image.url }}" alt="{{ item.name }}"></td>
+                <td>{{ item.name }}</td>
+                <td>${{ item.price }}</td>
+                <td>
+                    <ul class="quantity-container">
+                        <li>
+                            <form action="{% url 'add_to_cart' item.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="quantity-btn">+</button>
+                            </form>
+                        </li>
+                        <li>{{ item.quantity }}</li>
+                        <li><a href="{% url 'decrease_quantity' item.id %}"><button class="quantity-btn">-</button></a></li>
+                    </ul>
+                </td>
+                <td>${{ item.total_price }}</td>
+                <td><a href="{% url 'remove_from_cart' item.id %}" class="delete-btn">Delete</a></td>
+            </tr>
+            {% endfor %}
+            <tr class="total-row">
+                <td colspan="4" align="right">Total:</td>
+                <td>${{ total_price }}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="checkout-btn-container">
+        <a href="{% url 'checkout' %}" id="checkout-btn" class="checkout-btn">Check out</a>
+    </div>
+    {% else %}
+    <!-- Display a message if the cart is empty -->
+    <div class="empty-cart-message">
+        <p>Your shopping cart is empty.</p>
+    </div>
+    {% endif %}
+    <!-- JavaScript to disable checkout button if cart is empty -->
+    <script>
+        // JavaScript code to disable checkout button if cart is empty
+        document.addEventListener('DOMContentLoaded', function() {
+            var cartItems = "{{ cart_items|length }}"; // Get the number of items in the cart
+            var checkoutBtn = document.getElementById('checkout-btn');
+            if (cartItems == 0) {
+                checkoutBtn.style.pointerEvents = "none"; // Disable button click events
+                checkoutBtn.style.backgroundColor = "#ccc"; // Change button color to indicate disabled state
+            }
+        });
+    </script>
+</body>
+</html>
+
+{% endblock %}

@@ -1,0 +1,251 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-lv2SoQaQvqJxrAJ3+oKDTLdkY5P8N/QKoG5wFenpn5uoqawc/ZAzlLgR1Z+IFf+B" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <style>
+        /* Resetting default margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styles */
+        body {
+            background-image: url('https://img.freepik.com/free-photo/flat-lay-toys-with-food-bowl-fur-brush-dogs_23-2148949620.jpg?size=626&ext=jpg&ga=GA1.1.1700460183.1712793600&semt=ais');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            padding-left: 240px; /* Adjust padding to account for the sidebar */
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding-top: 20px;
+            text-align: center;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Subtle shadow */
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            color: white;
+            text-decoration: none;
+            margin: 20px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+            border-radius: 5px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .sidebar img {
+            margin-bottom: 20px;
+        }
+
+        /* Add Product button styles */
+        .add-product-btn-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .add-product-btn {
+            padding: 24px;
+            font-size: 16px;
+            border-radius: 50%;
+            background-color: #ff4747;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-product-btn:hover {
+            background-color: #ff1a1a;
+            transform: scale(1.1);
+        }
+
+        .add-product-btn i {
+            font-size: 24px;
+        }
+
+        /* Content styles */
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+        }
+
+        /* Grid container */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            justify-items: center;
+            align-items: stretch;
+        }
+
+        /* Product styles */
+        .product-container {
+            text-align: center;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .product {
+            border: 2px solid #ccc;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-block;
+            vertical-align: top;
+            animation: scaleIn 0.5s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .product .title {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .product .price {
+            font-size: 16px;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .btn.edit-btn {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+        }
+
+        .btn.delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+        }
+
+        /* Hover styles for buttons */
+        .btn.edit-btn:hover,
+        .btn.delete-btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Focus styles for buttons */
+        .btn.edit-btn:focus,
+        .btn.delete-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.4);
+        }
+
+        /* Animation for fade in effect */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animation for scale in effect */
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.5);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        
+        <a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'all_appointments' %}">Veterinarian Appointment User Data</a>
+        <a href="{% url 'adminpage' %}"><i class="fas fa-box"></i> Product Management</a>
+        <a href="{% url 'adminorders' %}"><i class="fas fa-shopping-cart"></i> Order Management</a>
+        <a href="{% url 'stock_management' %}"><i class="fas fa-warehouse"></i> Stock Management</a>
+        <a href="{% url 'manage_suppliers' %}"><i class="fas fa-truck"></i> Supplier Management</a>
+        <a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Log out</a>
+    </div>
+
+    <!-- Add Product button outside header -->
+    <div class="add-product-btn-container">
+        <a href="{% url 'admin_add' %}" class="btn add-product-btn">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+    
+    <h1>Manage Products</h1>
+    
+    <div class="grid-container">
+        {% for product in productdata %}
+            <div class="product-container">
+                <div class="product">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    <div class="title">{{ product.name }}</div>
+                    <div class="price">Rs{{ product.price }}</div>
+                    <a href="{% url 'edit_product' product.id %}" class="btn edit-btn">Edit</a>
+                    <a href="{% url 'delete_product' product.id %}" class="btn delete-btn">Delete</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

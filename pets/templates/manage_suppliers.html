@@ -1,0 +1,204 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex; /* Flexbox for layout */
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 220px;
+            background-color: #1c1c1c;
+            color: white;
+            padding-top: 20px;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            margin: 20px 0;
+            padding: 15px;
+            font-size: 18px;
+            transition: background-color 0.3s;
+            border-radius: 5px;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        /* Header styles */
+        .header {
+            background-color: #34495e;
+            color: #ffffff;
+            padding: 20px;
+            margin-left: 240px; /* Account for sidebar width */
+            width: calc(100% - 240px); /* Dynamic width */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-logo img {
+            height: 70px;
+            width: auto;
+        }
+
+        .header-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 20px;
+            transition: color 0.3s;
+        }
+
+        .header-links a:hover {
+            color: #cccccc;
+        }
+
+        /* Main content styles */
+        .main-content {
+            margin-left: 240px; /* Account for sidebar width */
+            width: calc(100% - 240px); /* Dynamic width */
+            padding: 20px;
+        }
+
+        .supplier-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .supplier-card {
+            background-color: #dbbbbb;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            flex: 1 1 300px;
+            transition: box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .supplier-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .supplier-info {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .edit-button {
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            margin-top: auto;
+            align-self: center;
+        }
+
+        .edit-button:hover {
+            background-color: #2980b9;
+        }
+
+        .add-supplier-button {
+            background-color: #27ae60;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+            align-self: flex-end;
+        }
+
+        .add-supplier-button:hover {
+            background-color: #219d54;
+        }
+
+        .no-suppliers {
+            color: #e74c3c;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0; /* Add some margin for spacing */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar section -->
+    <div class="sidebar">
+        <a href="{% url 'admin_dashboard' %}">Home</a>
+        <a href="{% url 'adminpage' %}">Product Management</a>
+        <a href="{% url 'adminorders' %}">Order Management</a>
+        <a href="{% url 'stock_management' %}">Stock Management</a>
+        <a href="{% url 'manage_suppliers' %}">Supplier Management</a>
+        <a href="{% url 'user_logout' %}">Log out</a>
+    </div>
+
+   
+    <!-- Main content section -->
+    <div class="main-content">
+        <h1>Manage Suppliers</h1>
+        
+        <a href="{% url 'register_supplier' %}" class="add-supplier-button">
+            <i class="fas fa-plus"></i> Add Supplier
+        </a>
+
+        <div class="supplier-container">
+            {% for supplier in suppliers %}
+            <div class="supplier-card">
+                <div class="supplier-info"><strong>Company Name:</strong> {{ supplier.company_name }}</div>
+                <div class="supplier-info"><strong>User Name:</strong> {{ supplier.username }}</div>
+                <div class="supplier-info"><strong>Email:</strong> {{ supplier.email }}</div>
+                <div class="supplier-info"><strong>Address:</strong> {{ supplier.address }}</div>
+                <a href="{% url 'edit_supplier' supplier.id %}" class="edit-button">Edit</a>
+                <a href="{% url 'delete_supplier' supplier.id %}" class="edit-button" onclick="return confirmDelete('{{ supplier.company_name }}');">Delete</a>
+            </div>
+            {% empty %}
+            <p class="no-suppliers">No suppliers found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete(companyName) {
+            return confirm(`Are you sure you want to delete ${companyName}?`);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom Severity Heatmap</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <h2>Symptom Severity Heatmap</h2>
+    <div id="heatmapDiv"></div>
+
+    <script>
+        function fetchHeatmapData() {
+            $.ajax({
+                url: "{% url 'fetch_heatmap_data' %}",
+                dataType: 'json',
+                success: function(data) {
+                    // Render the heatmap using Plotly
+                    Plotly.newPlot('heatmapDiv', data.data, data.layout);
+                }
+            });
+        }
+
+        // Fetch data on page load
+        $(document).ready(function() {
+            fetchHeatmapData();
+        });
+
+        // Optional: Set an interval to update the data dynamically
+        setInterval(fetchHeatmapData, 5000);  // Update every 5 seconds
+    </script>
+
+</body>
+</html>

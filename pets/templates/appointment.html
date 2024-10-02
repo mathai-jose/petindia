@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        h1 {
+            text-align: center;
+            color: #aa0000;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .form-control {
+            width: 100%;
+            padding: 15px;  /* Increased padding for bigger input fields */
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;  /* Adjusted padding for the button */
+            background-color: #aa0000;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s, box-shadow 0.2s ease;
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .datepicker, .timepicker {
+            padding: 15px;  /* Increased padding for datepicker and timepicker */
+            width: calc(100% - 30px);  /* Adjusted width to accommodate padding */
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Make an Appointment with Dr. {{ doctor.name }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                {{ form.name.errors }}  <!-- Display name field errors -->
+                {{ form.name }}  <!-- Render the name field -->
+            </div>
+            <div class="form-group">
+                <label for="email">Your Email</label>
+                {{ form.email.errors }}  <!-- Display email field errors -->
+                {{ form.email }}  <!-- Render the email field -->
+            </div>
+            <div class="form-group">
+                <label for="phone">Your Phone</label>  <!-- Add phone field -->
+                {{ form.phone.errors }}  <!-- Display phone field errors -->
+                {{ form.phone }}  <!-- Render the phone field -->
+            </div>
+            <div class="form-group">
+                <label for="date">Preferred Date</label>
+                {{ form.date.errors }}  <!-- Display date field errors -->
+                {{ form.date }}  <!-- Render the date field -->
+            </div>
+            <div class="form-group">
+                <label for="time">Preferred Time</label>
+                {{ form.time.errors }}  <!-- Display time field errors -->
+                {{ form.time }}  <!-- Render the time field -->
+            </div>
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    </div>
+    <!-- Add jQuery and jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
+    
+    <!-- Initialize datepicker and timepicker -->
+    <script>
+        $(function() {
+            // Datepicker initialization
+            $('.datepicker').datepicker({
+                dateFormat: 'yy-mm-dd',  // Format expected by Django
+                minDate: 0,  // Disallow past dates
+                showAnim: 'fadeIn',  // Animation for datepicker
+            });
+            
+            // Timepicker initialization
+            $('.timepicker').timepicker({
+                timeFormat: 'HH:mm:ss',  // 24-hour format
+                controlType: 'select',   // Use select dropdown for time
+                oneLine: true,
+                showAnim: 'fadeIn',  // Animation for timepicker
+            });
+        });
+    </script>
+</body>
+</html>

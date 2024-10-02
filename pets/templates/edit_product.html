@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Product</title>
+    <style>
+        body {
+            background-image: url('https://img.freepik.com/free-photo/flat-lay-toys-with-food-bowl-fur-brush-dogs_23-2148949620.jpg?size=626&ext=jpg&ga=GA1.1.1700460183.1712793600&semt=ais');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="file"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        p {
+            color: #888;
+        }
+
+        /* Style for Cancel link */
+        .cancel-link {
+            display: inline-block;
+            text-decoration: none;
+            padding: 8px 16px;
+            margin-right: 10px;
+            border-radius: 4px;
+            background-color: #bbb;
+            color: #fff;
+            transition: background-color 0.3s;
+        }
+
+        .cancel-link:hover {
+            background-color: #999;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: #909396;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin:  20px;
+        }
+
+        .header a:hover {
+            text-decoration: underline;
+        }
+
+        /* Navbar Styles */
+        .navbar-links a {
+            text-decoration: none;
+            color: #201717;
+        }
+
+        /* Navbar Styles */
+        .navbar-links {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            
+        }
+
+        .navbar-links li {
+            margin: 0 10px;
+        }
+     
+    /* Center align the label */
+    label.centered {
+        display: block;
+        text-align: center;
+    }
+
+    /* Center align the input field */
+    input.centered {
+        display: block;
+        margin: 0 auto;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="header" style="background-color: #909396; padding: 20px; text-align: center;">
+        
+        <div class="header-links">
+            <a href="{% url 'admin_dashboard' %}" style="color: white; text-decoration: none; margin: 0 20px;">
+                <img src="{% static 'assets/img/petsindia.jpg' %}" alt="logo" height="70px" width="130px">
+            </a>
+            <a href="{% url 'admin_dashboard' %}" style="color: white; text-decoration: none; margin: 0 20px;">Home</a>
+            <a href="{% url 'adminpage' %}" style="color: white; text-decoration: none; margin: 0 20px;">Product Management</a>
+            <a href="{% url 'adminorders' %}" style="color: white; text-decoration: none; margin: 0 20px;">Order Management</a>
+            <a href="{% url 'stock_management' %}" style="color: white; text-decoration: none; margin: 0 20px;">Stock Management</a>
+            <a href="{% url 'manage_suppliers' %}" style="color: white; text-decoration: none; margin: 0 20px;">Supplier Management</a>
+
+            <a href="{% url 'user_logout' %}" style="color: white; text-decoration: none; margin: 0 20px;">Log out</a>
+        </div>
+    </div>
+
+    <h1>Edit Product</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div>
+            <!-- Display the image if it exists -->
+            {% if product.image %}
+                <!-- Display the image using an img tag -->
+                <img src="{{ product.image.url }}" alt="Product Image">
+            {% else %}
+                <!-- Display a message if the image is not available -->
+                <p>No image available</p>
+            {% endif %}
+        </div>
+        <!-- Display the rest of the form fields -->
+        {{ form.name.errors }}
+        <label for="{{ form.name.id_for_label }}">Name:</label>
+        {{ form.name }}
+        <br>
+        {{ form.description.errors }}
+        <label for="{{ form.description.id_for_label }}">Description:</label>
+        {{ form.description }}
+        <br>
+        {{ form.category.errors }}
+        <label for="{{ form.category.id_for_label }}">Category:</label>
+        <select id="{{ form.category.id_for_label }}" name="{{ form.category.html_name }}">
+            <option value="" disabled selected>Select a category</option>
+            <option value="Wet Pet Food" {% if product.category == 'Wet Pet Food' %} selected {% endif %}>Wet Pet Food</option>
+            <option value="Commercial Raw Pet Food" {% if product.category == 'Commercial Raw Pet Food' %} selected {% endif %}>Commercial Raw Pet Food</option>
+            <option value="Dry Pet Food" {% if product.category == 'Dry Pet Food' %} selected {% endif %}>Dry Pet Food</option>
+            <option value="Toys" {% if product.category == 'Toys' %} selected {% endif %}>Toys</option>
+        </select>
+        <br>
+        {{ form.price.errors }}
+        <label for="{{ form.price.id_for_label }}">Price:</label>
+        {{ form.price }}
+        <br>
+        <label for="{{ form.quantity.id_for_label }}"></label> <!-- Add the warning text -->
+        <p style="color: #f44336; font-size: 20px; margin-bottom: 10px;">Please avoid updating the quantity:</p> <!-- Style the warning text -->
+        {{ form.quantity.errors }}
+        <label for="{{ form.quantity.id_for_label }}">Quantity:</label>
+        <input type="text" id="{{ form.quantity.id_for_label }}" name="{{ form.quantity.html_name }}" value="{{ product.quantity }}" readonly> <!-- Make the input field readonly -->        
+        <br>
+        {{ form.reorderlevel.errors }}
+        <label for="{{ form.reorderlevel.id_for_label }}">Reorder Level:</label>
+        {{ form.reorderlevel }}
+        <br>
+        {{ form.image.errors }}
+        <label for="{{ form.image.id_for_label }}">Image:</label>
+        {{ form.image }}
+        <br>
+        <input type="submit" value="Save Changes">
+        <a href="{% url 'adminpage' %}" class="cancel-link">Cancel</a>
+    </form>
+    
+</body>
+</html>

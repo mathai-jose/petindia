@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            background-color: #f5f2f2; /* Set the background colour for the entire page */
+            margin: 0; /* Remove default body margin */
+            font-family: Arial, sans-serif; /* Set a default font for the body */
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding-top: 20px;
+            text-align: center;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+            border-radius: 5px;
+        }
+
+        .sidebar img {
+            margin-bottom: 20px;
+            width: 130px;
+            height: auto;
+        }
+
+        .main-content {
+            margin-left: 240px; /* Margin to accommodate the sidebar */
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #909396;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 2em; /* Increase font size */
+            color: #333; /* Change text colour */
+        }
+
+        /* Table styles */
+        table {
+            width: 90%; /* Adjust table width as needed */
+            margin: 0 auto; /* Center align the table */
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #1f1e1e; /* Add border line for each cell */
+            padding: 10px; /* Increase padding for better readability */
+            text-align: left;
+        }
+
+        th {
+            background-color: #e1a7a7;
+        }
+
+        /* Style for "View Details" link */
+        .view-details-link {
+            color: #007bff; /* Change link colour */
+            text-decoration: none;
+            transition: color 0.3s; /* Add transition effect for colour change */
+        }
+
+        .view-details-link:hover {
+            color: #0056b3; /* Change link colour on hover */
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        /* Different colors for different statuses */
+        tr.processing {
+            background-color: #f5e79e; /* Light yellow */
+        }
+
+        tr.out-for-delivery {
+            background-color: #c7ecc7; /* Light green */
+        }
+
+        tr.delivered {
+            background-color: #a3d8ff; /* Light blue */
+        }
+
+        tr.shipped {
+            background-color: #d5a4ff; /* Light purple */
+        }
+
+        /* Animation for table rows */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Apply animation to table rows */
+        tbody tr {
+            animation: fadeInUp 3s ease;
+        }
+
+        /* Search form styles */
+        .search-form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 8px;
+            margin: 0 5px; /* Adjust margin */
+        }
+
+        .search-button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        
+        <a href="{% url 'admin_dashboard' %}">Home</a>
+        <a href="{% url 'all_appointments' %}">Veterinarian Appointment User Data</a>
+        <a href="{% url 'adminpage' %}">Product Management</a>
+        <a href="{% url 'adminorders' %}">Order Management</a>
+        <a href="{% url 'stock_management' %}">Stock Management</a>
+        <a href="{% url 'manage_suppliers' %}">Supplier Management</a>
+        <a href="{% url 'user_logout' %}">Log out</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Orders List</h1>
+        
+        {% if request.user.is_superuser %}
+        <!-- Display search form for superuser -->
+        <div class="search-form">
+            <form method="GET" action="{% url 'order_list' %}">
+                <input type="text" name="id" class="search-input" placeholder="OD24M">
+                <input type="text" name="fullname" class="search-input" placeholder="Search by Full Name">
+                <select name="status" class="search-input">
+                    <option value="" selected disabled hidden>Search by Status</option>
+                    <option value="processing">Processing</option>
+                    <option value="out_for_delivery">Out for Delivery</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                </select>
+                <button type="submit" class="search-button">Search</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ORDER ID</th>
+                    <th>Full Name</th>
+                    <th>Address</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    {% if request.user.is_superuser %}
+                    <th>Update Status</th> <!-- New column header for superuser -->
+                    {% endif %}
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders reversed %}
+                {% if request.user.is_superuser or order.user == request.user %}
+                <!-- Display orders for superuser or orders associated with the current user -->
+                <tr class="{{ order.status }} animate__animated animate__fadeInUp">
+                    <td>OD24M{{ order.id }}</td>
+                    <td>{{ order.fullname }}</td>
+                    <td>{{ order.address }}, {{ order.city }}, {{ order.postal_code }}</td>
+                    <td>${{ order.total_amount }}</td>
+                    <td>{{ order.get_status_display }}</td>
+                    {% if request.user.is_superuser %}
+                    <!-- Display update status form for superuser -->
+                    <td>
+                        <form action="{% url 'update_status' order.id %}" method="post">
+                            {% csrf_token %}
+                            <select name="status">
+                                <option value="processing">Processing</option>
+                                <option value="out_for_delivery">Out for Delivery</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                            </select>
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                    <td><a href="{% url 'order_detail' order.id %}" class="view-details-link">View Details</a></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

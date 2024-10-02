@@ -1,0 +1,239 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetsINDIA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-lv2SoQaQvqJxrAJ3+oKDTLdkY5P8N/QKoG5wFenpn5uoqawc/ZAzlLgR1Z+IFf+B" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url('https://static.bangkokpost.com/media/content/dcx/2022/12/06/4554955.jpg'); /* Replace with the actual path to your image */
+            background-size: cover; /* Ensure the background image covers the entire body */
+            background-repeat: no-repeat; /* Prevent the background image from repeating */
+            background-position: center; /* Center the background image */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            padding-left: 240px; /* Adjust padding to account for the sidebar */
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding-top: 20px;
+            text-align: center;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Subtle shadow */
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            color: white;
+            text-decoration: none;
+            margin: 20px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+            border-radius: 5px;
+        }
+
+        .sidebar a i {
+            margin-right: 10px;
+        }
+
+        .sidebar img {
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-container {
+            width: 80%;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #eadfb7;
+            box-shadow: 0 2px 5px rgba(209, 204, 204, 0.3);
+            border-radius: 8px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .form-input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-input:focus {
+            border-color: #66afe9;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px; /* Adjust spacing */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .cancel-link {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+            border: 1px solid #007bff;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .cancel-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .header {
+            background-color: #4caf50;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            transition: color 0.3s;
+        }
+
+        .header-links a:hover {
+            color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .navbar-links a {
+            text-decoration: none;
+            color: #201717; /* Navbar link text colour */
+        }
+
+        .navbar-links {
+            background-color: #fed9d9;
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 10px;
+        }
+
+        .navbar-links li {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        
+        <a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'all_appointments' %}">Veterinarian Appointment User Data</a>
+        <a href="{% url 'adminpage' %}"><i class="fas fa-box"></i> Product Management</a>
+        <a href="{% url 'adminorders' %}"><i class="fas fa-shopping-cart"></i> Order Management</a>
+        <a href="{% url 'stock_management' %}"><i class="fas fa-warehouse"></i> Stock Management</a>
+        <a href="{% url 'manage_suppliers' %}"><i class="fas fa-truck"></i> Supplier Management</a>
+        <a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Log out</a>
+    </div>
+
+    
+    <h1 style="color: #f12a2a;">Add Product</h1>
+    <form method="post" action="{% url 'admin_add' %}" enctype="multipart/form-data" class="form-container">
+        {% csrf_token %}
+        <div class="form-field">
+            <label for="name" class="form-label">Name:</label>
+            <input type="text" id="name" name="name" required class="form-input">
+        </div>
+
+        <div class="form-field">
+            <label for="description" class="form-label">Description:</label>
+            <input type="text" id="description" name="description" required class="form-input">
+        </div>
+
+        <div class="form-field">
+            <label for="category" class="form-label">Category:</label>
+            <select id="category" name="category" required class="form-input">
+                <option value="" disabled selected>Select a category</option>
+                <option value="Wet Pet Food">Wet Pet Food</option>
+                <option value="Commercial Raw Pet Food">Commercial Raw Pet Food</option>
+                <option value="Dry Pet Food">Dry Pet Food</option>
+                <option value="Toys">Toys</option>
+            </select>
+        </div>
+        
+        <div class="form-field">
+            <label for="price" class="form-label">Price:</label>
+            <input type="number" id="price" name="price" required class="form-input" min="0">
+        </div>
+
+        <div class="form-field">
+            <label for="quantity" class="form-label">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required class="form-input" min="0">
+        </div>
+
+        <div class="form-field">
+            <label for="reorderlevel" class="form-label">Reorder Level:</label>
+            <input type="number" id="reorderlevel" name="reorderlevel" required class="form-input" min="0">
+        </div>
+
+        <div class="form-field">
+            <label for="image" class="form-label">Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required class="form-input">
+        </div>
+
+        <input type="submit" value="Add">
+        <a href="{% url 'adminpage' %}" class="cancel-link">Cancel</a>
+    </form>
+
+</body>
+</html>

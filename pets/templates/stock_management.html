@@ -1,0 +1,225 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-lv2SoQaQvqJxrAJ3+oKDTLdkY5P8N/QKoG5wFenpn5uoqawc/ZAzlLgR1Z+IFf+B" crossorigin="anonymous">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex; /* Use flexbox for layout */
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding-top: 20px;
+            text-align: center;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: width 0.3s, opacity 0.3s; /* Transition for width changes */
+        }
+
+        .sidebar.collapsed {
+            width: 60px; /* Width when collapsed */
+            opacity: 0.8; /* Slightly transparent when collapsed */
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            text-align: left; /* Align text to the left */
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+            border-radius: 5px;
+        }
+
+        .main-content {
+            margin-left: 240px; /* Margin to accommodate the sidebar */
+            padding: 20px;
+            width: calc(100% - 240px); /* Adjust width to fill the remaining space */
+            max-width: 1200px; /* Set a maximum width for the main content */
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .header {
+            background-color: #909396;
+            padding: 20px;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .add-product-btn-container {
+            padding-top: 10px;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: #fdfdfd;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .add-product-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            background-color: #b6d407;
+            color: rgb(135, 97, 97);
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .add-product-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(22, 244, 244, 0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #a29c8b;
+            color: rgb(7, 7, 7);
+        }
+
+        /* Change color for restocked products */
+        .restocked {
+            background-color: #e6ffe6; /* Light green */
+        }
+
+        /* Collapse button */
+        .collapse-btn {
+            position: absolute;
+            top: 20px;
+            left: 230px;
+            cursor: pointer;
+            color: #333;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .collapse-btn:hover {
+            color: #575757;
+        }
+    </style>
+</head>
+<body>
+    <!-- Collapse button -->
+    <div class="collapse-btn" id="collapseBtn">
+        <i class="fas fa-angle-left"></i>
+    </div>
+
+    <!-- Sidebar section -->
+    <div class="sidebar" id="sidebar">
+        <a href="{% url 'admin_dashboard' %}">Home</a>
+        <a href="{% url 'all_appointments' %}">Veterinarian Appointment User Data</a>
+        <a href="{% url 'adminpage' %}">Product Management</a>
+        <a href="{% url 'adminorders' %}">Order Management</a>
+        <a href="{% url 'stock_management' %}">Stock Management</a>
+        <a href="{% url 'manage_suppliers' %}">Supplier Management</a>
+        <a href="{% url 'user_logout' %}">Log out</a>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <!-- Header section -->
+        <div class="header">
+            <h1>Stock Management</h1>
+        </div>
+
+        <!-- Products at Reorder Level section -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Reorder Level</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products_at_reorder_level %}
+                <tr {% if product.restocked %}class="restocked"{% endif %}>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category }}</td>
+                    <td>{{ product.reorderlevel }}</td>
+                    <td>
+                        <form action="{% url 'order_product' product.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Re-Order</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <form action="{% url 'purchase_orders' %}" method="post">
+                {% csrf_token %}
+                <!-- Conditional to check if there are products at reorder level -->
+                {% if products_at_reorder_level %}
+                <button type="submit">Generate Bill</button>
+                {% else %}
+                <button type="submit" disabled>Generate Bill</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const collapseBtn = document.getElementById('collapseBtn');
+
+        collapseBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed'); // Toggle the collapsed class
+            collapseBtn.innerHTML = sidebar.classList.contains('collapsed') 
+                ? '<i class="fas fa-angle-right"></i>' // Show right arrow when collapsed
+                : '<i class="fas fa-angle-left"></i>'; // Show left arrow when expanded
+
+            // Adjust the main content margin based on the sidebar state
+            const mainContent = document.querySelector('.main-content');
+            mainContent.style.marginLeft = sidebar.classList.contains('collapsed') ? '60px' : '240px';
+            mainContent.style.width = sidebar.classList.contains('collapsed') ? 'calc(100% - 60px)' : 'calc(100% - 240px)';
+        });
+    </script>
+</body>
+</html>

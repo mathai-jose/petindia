@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh; /* Full height */
+        }
+        .container-fluid {
+            flex-grow: 1; /* Allow the main container to grow */
+        }
+        .sidebar {
+            background-color: #250065;
+            padding: 20px;
+            border-radius: 20px;
+            color: white;
+            height: 100%; /* Full height */
+        }
+        .sidebar h3 {
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #260058;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 3em;
+            color: #000000;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+        .doctor-container {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .doctor-container:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+        .doctor-container h2 {
+            margin-top: 0;
+            font-size: 2em;
+            color: #8f0404;
+        }
+        .doctor-container p {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        .availability {
+            margin-left: 20px;
+            list-style-type: none;
+            padding: 0;
+        }
+        .availability li {
+            background-color: #ece4f8;
+            border: 1px solid #7408f8;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 12px;
+            color: #333333;
+            font-size: 1em;
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #8b0303;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn:hover {
+            background-color: #016b18;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .doctor-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .availability-header {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <h3>Dashboard</h3>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'add_record' %}">Dashboard</a>
+
+                        <a href="{% url 'add_record' %}">Visualization</a>
+                        <a href="{% url 'consultation' %}">Veterinarian Consultation</a>
+                        <a href="https://pet-disease-prediction-ewrxf6nkskvzzct4eky7eh.streamlit.app/">Streamlit</a>
+                        <a href="{% url 'user_logout' %}">Logout</a>
+                    {% else %}
+                        <a href="{% url 'combined_login' %}">Visualization</a>
+                        <a href="{% url 'combined_login' %}">Veterinarian Consultation</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="container">
+                    <h1>Doctors and Availability</h1>
+                    {% for doctor in doctors %}
+                        <div class="doctor-container">
+                            <div class="doctor-info">
+                                <h2>{{ doctor.name }}</h2>
+                                <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
+                                <p><strong>Location:</strong> {{ doctor.location }}</p>
+                            </div>
+                            <div>
+                                <p class="availability-header">Availability:</p>
+                                <ul class="availability">
+                                    {% for availability in doctor.availabilities.all %}
+                                        <li>
+                                            <span><strong>{{ availability.day_of_week }}:</strong></span> 
+                                            <span>{{ availability.start_time }} - {{ availability.end_time }}</span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <a href="{% url 'appointment' doctor.id %}" class="btn">Make an Appointment</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

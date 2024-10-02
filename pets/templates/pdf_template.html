@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PDF Disease Records</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .chart {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>PDF Disease Records</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Pet Name</th>
+                <th>Disease Name</th>
+                <th>Date Affected</th>
+                <th>Days to Cure</th>
+                <th>Date Cured</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+                <tr>
+                    <td>{{ record.pet_name }}</td>
+                    <td>{{ record.disease_name }}</td>
+                    <td>{{ record.date_affected }}</td>
+                    <td>{{ record.days_to_cure }}</td>
+                    <td>{{ record.date_affected|date:"Y-m-d" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="chart">
+        <img src="{{ chart_image }}" alt="Disease Chart">
+    </div>
+</body>
+</html>

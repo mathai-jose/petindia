@@ -1,0 +1,101 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Advice Results</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7fc;
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            margin-top: 60px;
+            max-width: 700px;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .card-header {
+            background-color: #28a745; /* Green tone */
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .card-header h2 {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        .card-body {
+            padding: 30px;
+            background-color: #ffffff;
+        }
+        .advice-content p {
+            font-size: 1rem;
+            font-weight: normal;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .advice-content p span {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .text-center a {
+            margin-top: 30px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 30px;
+                padding: 0 20px;
+            }
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+            .card-body {
+                padding: 20px;
+            }
+            .text-center a {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Pet Advice Results</h2>
+            </div>
+            <div class="card-body">
+                <div class="advice-content">
+                    <!-- Remove asterisks and convert newlines to <br> tags -->
+                    {{ advice|remove_asterisks|linebreaks }}
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{% url 'pet_medical_advisor' %}" class="btn btn-primary">Back to Advisor</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,241 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e8e79d;
+            /* background-image: url(https://static.vecteezy.com/system/resources/previews/007/010/900/non_2x/pet-care-illustration-on-a-background-premium-quality-symbols-icons-for-concept-and-graphic-design-vector.jpg); */
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 220px;
+            background-color: #333;
+            color: white;
+            padding-top: 20px;
+            text-align: center;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            margin: 20px 0;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+            border-radius: 5px;
+        }
+
+        .sidebar img {
+            margin-bottom: 20px;
+            width: 130px;
+            height: auto;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #4caf50;
+            padding: 20px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .content-section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-section h2 {
+            margin-top: 0;
+        }
+
+        .add-appointment-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 20px 0;
+        }
+
+        .add-appointment-button:hover {
+            background-color: #218838;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(17, 7, 7, 0.1);
+        }
+
+        .order-table caption {
+            caption-side: top;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .order-table th, .order-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .view-more-button, .view-details-button {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            display: inline-block;
+        }
+
+        .view-more-button:hover, .view-details-button:hover {
+            background-color: #0056b3;
+        }
+
+        .reorder-level-section ul, .registered-users-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .reorder-level-section li, .registered-users-section li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        
+        <a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'all_appointments' %}">Veterinarian Appointment User Data</a>
+        <a href="{% url 'adminpage' %}"><i class="fas fa-box"></i> Product Management</a>
+        <a href="{% url 'adminorders' %}"><i class="fas fa-shopping-cart"></i> Order Management</a>
+        <a href="{% url 'stock_management' %}"><i class="fas fa-warehouse"></i> Stock Management</a>
+        <a href="{% url 'manage_suppliers' %}"><i class="fas fa-truck"></i> Supplier Management</a>
+        <a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Log out</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+        </div>
+
+        
+        <div class="content-section reorder-level-section">
+            <h2>Products at Reorder Level:</h2>
+            <ul>
+                {% for product in products_at_reorder_level|slice:":10" %}
+                    <li>
+                        This {{ product.name }} needs to be restocked soon 
+                        <form action="{% url 'order_product' product.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Re-Order</button>
+                        </form>
+                    </li>
+                {% empty %}
+                    <li>No products at reorder level.</li>
+                {% endfor %}
+            </ul>
+            <a class="view-more-button" href="{% url 'stock_management' %}">View More.....</a>
+        </div>
+        
+        <div class="content-section order-table-section">
+            <table class="order-table">
+                <caption>View Last 10 Orders</caption>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                        <th>Address</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        {% if request.user.is_superuser %}
+                        <th>Update Status</th>
+                        {% endif %}
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in last_10_orders %}
+                    <tr>
+                        <td>A4B3{{ order.id }}</td>
+                        <td>{{ order.fullname }}</td>
+                        <td>{{ order.address }}, {{ order.city }}, {{ order.postal_code }}</td>
+                        <td>${{ order.total_amount }}</td>
+                        <td>{{ order.get_status_display }}</td>
+                        {% if request.user.is_superuser %}
+                        <td>
+                            <form action="{% url 'update_status' order.id %}" method="post">
+                                {% csrf_token %}
+                                <select name="status">
+                                    <option value="processing">Processing</option>
+                                    <option value="out_for_delivery">Out for Delivery</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
+                                </select>
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                        <td>
+                            <a class="view-details-button" href="{% url 'order_detail' order.id %}">View Details</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a class="view-more-button" href="{% url 'adminorders' %}">View More.....</a>
+        </div>
+
+        <div class="content-section registered-users-section">
+            <h2>All User Profiles</h2>
+            <ul>
+                {% for user_profile in all_users %}
+                    <li>{{ user_profile.username }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>
